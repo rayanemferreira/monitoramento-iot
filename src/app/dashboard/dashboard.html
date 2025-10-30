@@ -1,0 +1,40 @@
+<div class="grid">
+  <mat-card appearance="raised" class="card">
+    <mat-card-header>
+      <mat-card-title>Lâmpada</mat-card-title>
+      <mat-card-subtitle>Status do dispositivo</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="lamp-status">
+        <span [class.on]="lampOn">{{ lampOn ? 'Ligada' : 'Desligada' }}</span>
+        <mat-slide-toggle [(ngModel)]="lampOn">Alternar</mat-slide-toggle>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="raised" class="card chart-card">
+    <mat-card-header>
+      <mat-card-title>Temperatura</mat-card-title>
+      <mat-card-subtitle>Últimas leituras</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="chart-wrapper">
+        <canvas baseChart [type]="'line'" [data]="tempChartData" [options]="lineChartOptions"></canvas>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="raised" class="card chart-card">
+    <mat-card-header>
+      <mat-card-title>Humidade</mat-card-title>
+      <mat-card-subtitle>Últimas leituras</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="chart-wrapper">
+        <canvas baseChart [type]="'line'" [data]="humChartData" [options]="lineChartOptions"></canvas>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+

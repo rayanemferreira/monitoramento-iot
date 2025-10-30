@@ -1,0 +1,36 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+
+.card {
+  height: 100%;
+}
+
+.chart-card {
+  min-height: 280px;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 220px;
+}
+
+.lamp-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lamp-status span {
+  font-weight: 600;
+}
+
+.lamp-status span.on {
+  color: #2e7d32;
+}
+
+
