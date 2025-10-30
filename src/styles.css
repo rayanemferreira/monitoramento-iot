@@ -1,2 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+/* Dark dialog to match dashboard */
+.dark-dialog .mat-mdc-dialog-surface {
+  background: #1a1a1a;
+  color: #e5e5e5;
+}
+.dark-dialog .mat-mdc-dialog-title {
+  color: #e5e5e5;
+}
+.dark-dialog .mdc-dialog__content {
+  color: #cfcfcf;
+}

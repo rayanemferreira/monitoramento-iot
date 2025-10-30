@@ -1,40 +1,84 @@
-<div class="grid">
-  <mat-card appearance="raised" class="card">
+<div class="grid dashboard">
+  @for (device of devices; let i = $index; track device.name) {
+  <mat-card appearance="raised" class="card device-card" [ngClass]="['status-' + device.status, 'device-' + i]">
     <mat-card-header>
-      <mat-card-title>Lâmpada</mat-card-title>
-      <mat-card-subtitle>Status do dispositivo</mat-card-subtitle>
+      <mat-card-title>{{ device.name | titlecase }}</mat-card-title>
+      <mat-card-subtitle>Status — {{ device.status | uppercase }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <div class="lamp-status">
-        <span [class.on]="lampOn">{{ lampOn ? 'Ligada' : 'Desligada' }}</span>
-        <mat-slide-toggle [(ngModel)]="lampOn">Alternar</mat-slide-toggle>
+      <div class="device-row">
+        <span [class.on]="device.on">{{ device.on ? 'Ligado' : 'Desligado' }}</span>
+        <mat-slide-toggle [(ngModel)]="device.on">Alternar</mat-slide-toggle>
+      </div>
+      <div class="actions">
+        <button mat-stroked-button color="primary" (click)="openHistory(device)">Histórico</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  }
+  <mat-card appearance="raised" class="card gauge">
+    <mat-card-header>
+      <mat-card-title>Tanque de água</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="chart-wrapper half-circle">
+        @if (isBrowser) {
+        <canvas baseChart [type]="'doughnut'" [data]="gaugeChartData" [options]="gaugeChartOptions"></canvas>
+        }
+        <div class="chart-center">{{ getRealTime('gaugeValue')?.value }}<span class="unit">%</span></div>
       </div>
     </mat-card-content>
   </mat-card>
 
-  <mat-card appearance="raised" class="card chart-card">
+  <mat-card appearance="raised" class="card location" >
     <mat-card-header>
-      <mat-card-title>Temperatura</mat-card-title>
-      <mat-card-subtitle>Últimas leituras</mat-card-subtitle>
+      <mat-card-title>Umidade</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <div class="chart-wrapper">
-        <canvas baseChart [type]="'line'" [data]="tempChartData" [options]="lineChartOptions"></canvas>
-      </div>
+      <div class="stat-big">{{ getRealTime('humidity')?.value }}<span class="unit">%</span></div>
+      <div class="muted">10m ago</div>
     </mat-card-content>
   </mat-card>
 
-  <mat-card appearance="raised" class="card chart-card">
+  <mat-card appearance="raised" class="card temp" >
     <mat-card-header>
-      <mat-card-title>Humidade</mat-card-title>
-      <mat-card-subtitle>Últimas leituras</mat-card-subtitle>
+      <mat-card-title>Temperatura externa</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="stat-big">{{ getRealTime('tempOutside')?.value }}<span class="unit">°C</span></div>
+      <div class="muted">10m ago</div>
+    </mat-card-content>
+  </mat-card>
+ 
+
+  <mat-card appearance="raised" class="card chart-card line">
+    <mat-card-header>
+      <mat-card-title>Temperatura e umidade</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <div class="chart-wrapper">
+        @if (isBrowser) {
         <canvas baseChart [type]="'line'" [data]="humChartData" [options]="lineChartOptions"></canvas>
+        }
       </div>
     </mat-card-content>
   </mat-card>
+
+  <mat-card appearance="raised" class="card chart-card water">
+    <mat-card-header>
+      <mat-card-title>Nível de água</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="chart-wrapper">
+        @if (isBrowser) { <canvas baseChart [type]="'doughnut'" [data]="waterChartData" [options]="waterChartOptions"></canvas> }
+        <div class="chart-center">{{ getRealTime('waterLevel')?.value }}</div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+ 
+
+   
 </div>
 
 

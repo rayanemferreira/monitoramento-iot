@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Histórico — {{ data.name | titlecase }}</h2>
+<div class="dialog-body">
+  <div class="chart-wrapper">
+    @if (isBrowser) {
+    <canvas baseChart [type]="'line'" [data]="chartData" [options]="lineOptions"></canvas>
+    }
+  </div>
+  <div class="legend">1 = ligado, 0 = desligado</div>
+  <div class="actions">
+    <button mat-stroked-button color="primary" (click)="close()">Fechar</button>
+  </div>
+</div>
+
+

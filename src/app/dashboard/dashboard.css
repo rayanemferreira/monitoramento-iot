@@ -1,7 +1,7 @@
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
   padding: 16px;
 }
 
@@ -33,4 +33,89 @@
   color: #2e7d32;
 }
 
+
+/* Dark dashboard look */
+.dashboard {
+  background: #111;
+}
+.dashboard .mat-mdc-card {
+  background: #1a1a1a;
+  color: #e5e5e5;
+}
+.muted { color: #8a8a8a; }
+.stat-big { font-size: 32px; font-weight: 700; }
+.stat-big .unit { font-size: 16px; margin-left: 4px; }
+
+/* Grid areas like the reference layout */
+.device-card { min-height: 120px; }
+.device-row { display: flex; align-items: center; justify-content: space-between; }
+.actions { margin-top: 10px; display: flex; justify-content: flex-end; }
+.gauge { grid-area: gauge; }
+.location { grid-area: location; }
+.temp { grid-area: temp; }
+.humid { grid-area: humid; }
+.line { grid-area: line; }
+.water { grid-area: water; }
+.drip { grid-area: drip; }
+.sprinkler { grid-area: sprinkler; }
+
+.device-0 { grid-area: device0; }
+.device-1 { grid-area: device1; }
+.device-2 { grid-area: device2; }
+.device-3 { grid-area: device3; }
+
+.dashboard {
+  grid-template-areas:
+    "device0 device1 device2 device3"
+    "gauge   gauge   location temp"
+    "line    line    water    humid"
+    "drip    sprinkler .        .";
+}
+
+/* Half circle wrapper for gauge */
+.half-circle { height: 200px; }
+.chart-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+}
+.chart-center .unit { font-size: 14px; margin-left: 4px; }
+
+.map-placeholder {
+  height: 220px;
+  background: linear-gradient(135deg, #0f0f0f, #151515);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.controls-grid .label { font-size: 12px; color: #9e9e9e; margin-bottom: 6px; }
+.controls-grid .device { display: flex; align-items: center; justify-content: space-between; }
+
+/* Card status colors */
+.card.status-info {
+  border-left: 4px solid #1976d2;
+  background: rgba(25, 118, 210, 0.06);
+}
+
+.card.status-warn {
+  border-left: 4px solid #e9ed02;
+  background: rgba(233, 237, 2, 0.06);
+}
+
+.card.status-error {
+  border-left: 4px solid #d32f2f;
+  background: rgba(211, 47, 47, 0.06);
+}
 
