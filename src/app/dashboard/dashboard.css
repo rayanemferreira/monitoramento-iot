@@ -72,6 +72,65 @@
     "drip    sprinkler .        .";
 }
 
+/* Responsive breakpoints */
+@media (max-width: 1200px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+  .dashboard {
+    grid-template-areas:
+      "device0 device1 device2"
+      "device3 gauge   gauge"
+      "location temp    water"
+      "line    line    line"
+      "drip    sprinkler .";
+  }
+}
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .dashboard {
+    grid-template-areas:
+      "device0 device1"
+      "device2 device3"
+      "gauge   gauge"
+      "location temp"
+      "water   water"
+      "line    line"
+      "drip    sprinkler";
+  }
+  .chart-wrapper { height: 180px; }
+  .half-circle { height: 160px; }
+}
+
+@media (max-width: 600px) {
+  .grid { grid-template-columns: 1fr; }
+  .dashboard {
+    grid-template-areas:
+      "device0"
+      "device1"
+      "device2"
+      "device3"
+      "gauge"
+      "location"
+      "temp"
+      "water"
+      "line"
+      "drip"
+      "sprinkler";
+  }
+  .chart-wrapper { height: 160px; }
+  .half-circle { height: 140px; }
+}
+
+/* Desktop-specific reductions for Umidade, Nível de água e Lâmpada */
+@media (min-width: 1200px) {
+  .card.location .stat-big { font-size: 24px; }
+  .card.water .chart-wrapper { height: 160px; }
+  .card.water .chart-center { font-size: 22px; }
+  .card.device-2 { min-height: 100px; }
+  .card.device-2 .device-row { gap: 8px; }
+  .card.device-2 .mat-mdc-slide-toggle { transform: scale(0.9); transform-origin: right center; }
+}
+
 /* Half circle wrapper for gauge */
 .half-circle { height: 200px; }
 .chart-center {
