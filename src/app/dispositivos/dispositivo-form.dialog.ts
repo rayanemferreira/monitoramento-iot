@@ -43,14 +43,21 @@ export class DispositivoFormDialogComponent {
       id: [d?.id ?? null],
       name: [d?.name ?? '', [Validators.required, Validators.maxLength(80)]],
       category_id: [d?.category_id ?? 1, [Validators.required]],
-      category: [d?.category ?? 'Leitura', [Validators.required]],
+      category: [d?.category ?? '', [Validators.required]],
       status: [d?.status ?? 'info', [Validators.required]],
-      value: [d?.value ?? 0, [Validators.required, Validators.min(0)]],
+      value: [d?.value ?? 1],
       on: [d?.on ?? false]
     });
 
+    // Define categoria: se vier em data?.dispositivo usa-a; senão mapeia do category_id selecionado
+    const hasCategory = !!(d?.category && d.category.trim().length);
+    const initialCategoryId = this.form.get('category_id')!.value as number;
+    const initialCategory = hasCategory ? d!.category : this.mapCategoryFromId(initialCategoryId);
+    this.form.get('category')!.setValue(initialCategory, { emitEvent: false });
+
+    // Mantém category sincronizado com a seleção de category_id
     this.form.get('category_id')!.valueChanges.subscribe((cid: number) => {
-      const name = cid === 2 ? 'Controle' : 'Leitura';
+      const name = this.mapCategoryFromId(cid);
       this.form.get('category')!.setValue(name, { emitEvent: false });
     });
   }
@@ -62,6 +69,23 @@ export class DispositivoFormDialogComponent {
 
   cancel(): void {
     this.dialogRef.close();
+  }
+
+  private mapCategoryFromId(categoryId: number): string {
+    switch (categoryId) {
+      case 1:
+        return 'Atuador';
+      case 2:
+        return 'sensor_agua';
+      case 3:
+        return 'sensor_umidade';
+      case 4:
+        return 'sensor_temperatura';
+      case 5:
+        return 'sensor_nivel_de_agua';
+      default:
+        return 'Atuador';
+    }
   }
 }
 

@@ -27,15 +27,14 @@ export class DispositivosComponent {
   }
 
   load(): void {
-    this.dispositivos = this.service.getAll();
+    this.service.getAll().subscribe(list => this.dispositivos = list);
   }
 
   add(): void {
      const ref = this.dialog.open(DispositivoFormDialogComponent, { width: '560px', panelClass: 'dark-dialog' });
     ref.afterClosed().subscribe((value) => {
       if (!value) return;
-      this.service.create(value);
-      this.load();
+      this.service.create(value).subscribe(() => this.load());
     });
   }
 
@@ -47,16 +46,14 @@ export class DispositivosComponent {
     });
     ref.afterClosed().subscribe((value) => {
       if (!value) return;
-      this.service.update(d.id, value);
-      this.load();
+      this.service.update(d.id, value).subscribe(() => this.load());
     });
   }
 
   remove(d: Dispositivo): void {
     const ok = confirm(`Excluir dispositivo "${d.name}"?`);
     if (!ok) return;
-    this.service.delete(d.id);
-    this.load();
+    this.service.delete(d.id).subscribe(() => this.load());
   }
 }
 

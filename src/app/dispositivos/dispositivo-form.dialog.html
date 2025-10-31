@@ -10,10 +10,13 @@
     <mat-form-field appearance="outline">
       <mat-label>Categoria</mat-label>
       <mat-select formControlName="category_id">
-        <mat-option [value]="1">Leitura</mat-option>
-        <mat-option [value]="2">Controle</mat-option>
+        <mat-option [value]="1">Atuador</mat-option>
+        <mat-option [value]="2">sensor_agua</mat-option>
+        <mat-option [value]="3">sensor_umidade</mat-option>
+        <mat-option [value]="4">sensor_temperatura</mat-option>
+        <mat-option [value]="5">sensor_nivel_de_agua</mat-option>
       </mat-select>
-    </mat-form-field>
+    </mat-form-field> 
 
     <mat-form-field appearance="outline">
       <mat-label>Status</mat-label>

@@ -10,6 +10,8 @@ import { HistoryDialogComponent } from './history-dialog';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
 import { Dispositivo, DispositivoStatus } from '../models/dispositivo';
+import { DispositivoService } from '../services/dispositivo.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,19 +26,18 @@ export class DashboardComponent {
  
   readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private dialog = inject(MatDialog);
+  private router = inject(Router);
+  private readonly service = inject(DispositivoService);
+  Dispositivos: Dispositivo[] = [];
 
-  Dispositivos: Dispositivo[] = [
-    {  id: '1',on: true, category_id:1,category:'Leitura', name: 'Temperatura Externa', status: 'info', value: 29, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
-    {  id: '2',on: true, category_id:1,category:'Leitura', name: 'Humidade', status: 'info', value: 62, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
-    {  id: '3',on: true, category_id:1,category:'Leitura', name: 'Nível de água', status: 'info', value: 6, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
-    {  id: '4',on: true, category_id:1,category:'Leitura', name: 'Valor do tanque', status: 'info', value: 61, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
-    {  id: '5',on: true, category_id:2,category:'Controle', name: 'geladeira', status: 'info', value: 29, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
-    {  id: '6',on: true, category_id:2,category:'Controle', name: 'ar condicionado', status: 'info', value: 62, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
-    {  id: '7',on: true, category_id:2,category:'Controle', name: 'lâmpada', status: 'info', value: 6, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
-    {  id: '8',on: true, category_id:2,category:'Controle', name: 'tv', status: 'info', value: 61, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
+  constructor() {
+    this.load();
+  }
 
-  ];
-  
+  private load(): void {
+    this.service.getAll().subscribe(list => this.Dispositivos = list);
+  }
+ 
 
   
   readonly gaugeChartOptions: ChartConfiguration<'doughnut'>['options'] = {
@@ -113,6 +114,9 @@ export class DashboardComponent {
       }
     ]
   };
+  goToDispositivos(): void {
+    this.router.navigateByUrl('/dispositivos');
+  }
 
   openHistory(device: Dispositivo): void {
     const series = this.buildMockHistory(24);

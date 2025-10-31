@@ -1,7 +1,8 @@
 <div class="grid dashboard">
 
+  
   @for (device of Dispositivos; track device.name; let i = $index) {
-    @if (device.category_id == 2) {
+    @if (device.category_id == 1) {
       <mat-card appearance="raised" class="card device-card" 
         [ngClass]="['status-' + device.status, 'device-' + i]">
         
@@ -95,5 +96,7 @@
       </div>
     </mat-card-content>
   </mat-card>
-
+  <button mat-stroked-button color="primary" (click)="goToDispositivos()">
+    Gerenciar Dispositivos
+  </button>
 </div>

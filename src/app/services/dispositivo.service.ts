@@ -1,80 +1,37 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Dispositivo } from '../models/dispositivo';
-
-const STORAGE_KEY = 'dispositivos';
 
 @Injectable({ providedIn: 'root' })
 export class DispositivoService {
-  private memory: Dispositivo[] | null = null;
+  private readonly baseUrl = 'http://localhost:8000/api/dispositivos/';
 
-  private get storageAvailable(): boolean {
-    try {
-      return typeof localStorage !== 'undefined';
-    } catch {
-      return false;
-    }
+  constructor(private readonly http: HttpClient) {}
+
+  getAll(): Observable<Dispositivo[]> {
+    return this.http.get<Dispositivo[]>(this.baseUrl);
   }
 
-  getAll(): Dispositivo[] {
-    if (this.storageAvailable) {
- 
-        const seed: Dispositivo[] = [
-          { id: '1', name: 'Temperatura Externa', status: 'info', value: 29, visto_por_ultimo: '10-09-2025', criado_em: '10-09-2025', on: true, category_id: 1, category: 'Leitura' },
-          { id: '2', name: 'Lâmpada', status: 'info', value: 0, visto_por_ultimo: '10-09-2025', criado_em: '10-09-2025', on: false, category_id: 2, category: 'Controle' }
-        ];
-         return seed;
-      
-      
-    }
-    if (!this.memory) {
-      this.memory = [
-        { id: '1', name: 'Temperatura Externa', status: 'info', value: 29, visto_por_ultimo: '10-09-2025', criado_em: '10-09-2025', on: true, category_id: 1, category: 'Leitura' },
-        { id: '2', name: 'Lâmpada', status: 'info', value: 0, visto_por_ultimo: '10-09-2025', criado_em: '10-09-2025', on: false, category_id: 2, category: 'Controle' }
-      ];
-    }
-    return this.memory;
+  getById(id: string): Observable<Dispositivo> {
+    return this.http.get<Dispositivo>(`${this.baseUrl}${id}/`);
   }
 
-  getById(id: string): Dispositivo | undefined {
-    return this.getAll().find(d => d.id === id);
+  create(input: Omit<Dispositivo, 'id' | 'criado_em' | 'visto_por_ultimo'>): Observable<Dispositivo> {
+    const payload: any = { ...input };
+    delete payload.id;
+    delete payload.criado_em;
+    delete payload.visto_por_ultimo;
+    return this.http.post<Dispositivo>(this.baseUrl, payload);
   }
 
-  create(input: Omit<Dispositivo, 'id' | 'criado_em' | 'visto_por_ultimo'>): Dispositivo {
-    const list = this.getAll();
-    const now = new Date();
-    const next: Dispositivo = {
-      ...input,
-      id: (globalThis as any).crypto?.randomUUID ? (crypto as any).randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-      criado_em: now.toISOString().slice(0, 10),
-      visto_por_ultimo: now.toISOString().slice(0, 10)
-    };
-    list.push(next);
-    this.save(list);
-    return next;
+  update(id: string, changes: Partial<Omit<Dispositivo, 'id'>>): Observable<Dispositivo> {
+    const payload: any = { ...changes };
+    delete payload.id;
+    return this.http.put<Dispositivo>(`${this.baseUrl}${id}/`, payload);
   }
 
-  update(id: string, changes: Partial<Omit<Dispositivo, 'id'>>): Dispositivo | undefined {
-    const list = this.getAll();
-    const idx = list.findIndex(d => d.id === id);
-    if (idx === -1) return undefined;
-    const updated: Dispositivo = { ...list[idx], ...changes };
-    list[idx] = updated;
-    this.save(list);
-    return updated;
-  }
-
-  delete(id: string): void {
-    const list = this.getAll().filter(d => d.id !== id);
-    this.save(list);
-  }
-
-  private save(list: Dispositivo[]): void {
-    if (this.storageAvailable) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    } else {
-      this.memory = list;
-    }
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}${id}/`);
   }
 }
-
-
