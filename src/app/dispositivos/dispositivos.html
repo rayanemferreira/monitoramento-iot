@@ -1,0 +1,37 @@
+<div class="page dashboard">
+  <mat-card appearance="raised" class="card header">
+    <div class="header-row">
+      <div>
+        <div class="title">Dispositivos</div>
+        <div class="muted">Gerencie seus dispositivos IoT</div>
+      </div>
+      <button mat-flat-button color="primary" (click)="add()">Novo dispositivo</button>
+    </div>
+  </mat-card>
+
+  <mat-card appearance="raised" class="card list">
+    <div class="table">
+      <div class="thead">
+        <div>Nome</div>
+        <div>Categoria</div>
+        <div>Status</div>
+        <div>Valor</div>
+        <div>Ações</div>
+      </div>
+      <div class="row" *ngFor="let d of dispositivos">
+        <div>{{ d.name }}</div>
+        <div>{{ d.category }}</div>
+        <div>
+          <span class="chip" [ngClass]="'c-' + d.status">{{ d.status | uppercase }}</span>
+        </div>
+        <div>{{ d.value }}</div>
+        <div class="actions">
+          <button mat-stroked-button color="primary" (click)="edit(d)">Editar</button>
+          <button mat-stroked-button color="warn" (click)="remove(d)">Excluir</button>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+</div>
+
+

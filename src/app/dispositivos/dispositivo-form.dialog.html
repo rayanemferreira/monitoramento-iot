@@ -1,0 +1,44 @@
+<h2 mat-dialog-title>{{ form.value.id ? 'Editar Dispositivo' : 'Novo Dispositivo' }}</h2>
+
+<div class="dialog-body">
+  <form [formGroup]="form" (ngSubmit)="save()" class="form-grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Nome</mat-label>
+      <input matInput formControlName="name" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Categoria</mat-label>
+      <mat-select formControlName="category_id">
+        <mat-option [value]="1">Leitura</mat-option>
+        <mat-option [value]="2">Controle</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status">
+        <mat-option value="info">Info</mat-option>
+        <mat-option value="warn">Aviso</mat-option>
+        <mat-option value="error">Erro</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Valor</mat-label>
+      <input type="number" matInput formControlName="value" />
+    </mat-form-field>
+
+    <div class="toggle-row">
+      <span>Ligado</span>
+      <mat-slide-toggle formControlName="on"></mat-slide-toggle>
+    </div>
+
+    <div class="actions">
+      <button mat-stroked-button type="button" (click)="cancel()">Cancelar</button>
+      <button mat-flat-button color="primary" type="submit">Salvar</button>
+    </div>
+  </form>
+</div>
+
+

@@ -9,20 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { HistoryDialogComponent } from './history-dialog';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
-
-type DeviceStatus = 'info' | 'warn' | 'error';
-interface Device {
-  name: string;
-  on: boolean;
-  status: DeviceStatus;
-}
-
-export interface RealTimeDevice {
-  id: string;
-  name: string;
-  status: DeviceStatus;
-  value: number;
-}
+import { Dispositivo, DispositivoStatus } from '../models/dispositivo';
 
 @Component({
   selector: 'app-dashboard',
@@ -34,27 +21,24 @@ export interface RealTimeDevice {
 
 export class DashboardComponent {
   lampOn = false;
-  devices: Device[] = [
-    { name: 'geladeira', on: true, status: 'info' },
-    { name: 'ar condicionado', on: false, status: 'warn' },
-    { name: 'lâmpada', on: false, status: 'info' },
-    { name: 'tv', on: true, status: 'error' }
-  ];
+ 
   readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private dialog = inject(MatDialog);
 
-  // Real-time devices/metrics displayed on summary cards
-  realtimeDevices: RealTimeDevice[] = [
-    { id: 'tempOutside', name: 'Temperatura Externa', status: 'info', value: 29 },
-    { id: 'humidity', name: 'Humidade', status: 'info', value: 62 },
-    { id: 'waterLevel', name: 'Nível de água', status: 'info', value: 6 },
-    { id: 'gaugeValue', name: 'Valor do tanque', status: 'info', value: 61 }
+  Dispositivos: Dispositivo[] = [
+    {  id: '1',on: true, category_id:1,category:'Leitura', name: 'Temperatura Externa', status: 'info', value: 29, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
+    {  id: '2',on: true, category_id:1,category:'Leitura', name: 'Humidade', status: 'info', value: 62, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
+    {  id: '3',on: true, category_id:1,category:'Leitura', name: 'Nível de água', status: 'info', value: 6, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
+    {  id: '4',on: true, category_id:1,category:'Leitura', name: 'Valor do tanque', status: 'info', value: 61, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
+    {  id: '5',on: true, category_id:2,category:'Controle', name: 'geladeira', status: 'info', value: 29, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
+    {  id: '6',on: true, category_id:2,category:'Controle', name: 'ar condicionado', status: 'info', value: 62, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
+    {  id: '7',on: true, category_id:2,category:'Controle', name: 'lâmpada', status: 'info', value: 6, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
+    {  id: '8',on: true, category_id:2,category:'Controle', name: 'tv', status: 'info', value: 61, visto_por_ultimo:'10-09-2025',criado_em:'10-09-2025'},
+
   ];
+  
 
-  // Gauge and water level values
-  gaugeValue = 65; // percent full
-  waterLevel = 6; // demo value
-
+  
   readonly gaugeChartOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
     maintainAspectRatio: false,
@@ -64,7 +48,7 @@ export class DashboardComponent {
     plugins: { legend: { display: false }, tooltip: { enabled: false } }
   };
   get gaugeChartData(): ChartConfiguration<'doughnut'>['data'] {
-    const v = Math.max(0, Math.min(100, this.gaugeValue));
+    const v = Math.max(0, Math.min(100, this.getRealTime('4')?.value || 0));
     return {
       labels: ['Valor', 'Restante'],
       datasets: [
@@ -80,7 +64,7 @@ export class DashboardComponent {
     plugins: { legend: { display: false }, tooltip: { enabled: false } }
   };
   get waterChartData(): ChartConfiguration<'doughnut'>['data'] {
-    const v = Math.max(0, Math.min(100, this.waterLevel));
+    const v = Math.max(0, Math.min(100, this.getRealTime('3')?.value || 0));
     return {
       labels: ['Nível', 'Restante'],
       datasets: [
@@ -130,7 +114,7 @@ export class DashboardComponent {
     ]
   };
 
-  openHistory(device: Device): void {
+  openHistory(device: Dispositivo): void {
     const series = this.buildMockHistory(24);
     this.dialog.open(HistoryDialogComponent, {
       data: {
@@ -159,8 +143,8 @@ export class DashboardComponent {
     return { labels, values };
   }
 
-  getRealTime(id: string): RealTimeDevice | undefined {
-    return this.realtimeDevices.find(d => d.id === id);
+  getRealTime(id: string): Dispositivo | undefined {
+    return this.Dispositivos.find(d => d.id === id);
   }
 }
 

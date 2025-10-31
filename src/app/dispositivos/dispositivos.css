@@ -1,0 +1,44 @@
+.page {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  background: #111;
+}
+
+.page .mat-mdc-card { background: #1a1a1a; color: #e5e5e5; }
+.muted { color: #8a8a8a; }
+
+.header .header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title { font-size: 20px; font-weight: 700; }
+
+.table { width: 100%; }
+.thead, .row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1.2fr;
+  gap: 8px;
+  align-items: center;
+}
+.thead { color: #9e9e9e; font-size: 12px; text-transform: uppercase; }
+.row { padding: 10px 0; border-top: 1px solid #2a2a2a; }
+.row:first-child { border-top: 0; }
+
+.chip { padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+.chip.c-info { background: rgba(25, 118, 210, 0.15); color: #90caf9; }
+.chip.c-warn { background: rgba(233, 237, 2, 0.15); color: #e9ed02; }
+.chip.c-error { background: rgba(211, 47, 47, 0.15); color: #ef9a9a; }
+
+.actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+@media (max-width: 900px) {
+  .thead, .row { grid-template-columns: 2fr 1fr 1fr .8fr 1fr; }
+}
+@media (max-width: 600px) {
+  .thead, .row { grid-template-columns: 1.5fr .8fr .8fr .6fr 1fr; }
+}
+
+

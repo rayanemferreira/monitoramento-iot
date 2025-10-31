@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
 
-export interface DeviceHistoryData {
+export interface DispositivoHistoryData {
   name: string;
   labels: string[];
   values: number[];
@@ -35,7 +35,7 @@ export class HistoryDialogComponent {
   readonly chartData: ChartConfiguration<'line'>['data'];
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: DeviceHistoryData,
+    @Inject(MAT_DIALOG_DATA) public data: DispositivoHistoryData,
     private dialogRef: MatDialogRef<HistoryDialogComponent>
   ) {
     this.chartData = {
