@@ -28,74 +28,87 @@
     }
   }
 
-  <mat-card appearance="raised" class="card gauge">
-    <mat-card-header>
-      <mat-card-title>Tanque de água</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="chart-wrapper half-circle">
-        @if (isBrowser) {
+  @for (sensor of getRealTimeDevices(2); track sensor.id) {
+    <mat-card appearance="raised" class="card chart-card">
+      <mat-card-header>
+        <mat-card-title>Tanque de água — {{ sensor.name | titlecase }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-wrapper half-circle">
           <canvas baseChart [type]="'doughnut'" 
-                  [data]="gaugeChartData" 
+                  [data]="buildDoughnutData(sensor.value)" 
                   [options]="gaugeChartOptions"></canvas>
-        }
-        <div class="chart-center">
-          {{ getRealTime('4')?.value }}<span class="unit">%</span>
+          <div class="chart-center">
+            {{ sensor.value }}<span class="unit">%</span>
+          </div>
         </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
+      </mat-card-content>
+    </mat-card>
+  }
 
-  <mat-card appearance="raised" class="card location">
-    <mat-card-header>
-      <mat-card-title>Umidade</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="stat-big">{{ getRealTime('2')?.value }}<span class="unit">%</span></div>
-      <div class="muted">10m ago</div>
-    </mat-card-content>
-  </mat-card>
+  @for (sensor of getRealTimeDevices(3); track sensor.id) {
+    <mat-card appearance="raised" class="card">
+      <mat-card-header>
+        <mat-card-title>Umidade — {{ sensor.name | titlecase }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-big">{{ sensor.value }}<span class="unit">%</span></div>
+        <div class="muted">10m ago</div>
+      </mat-card-content>
+    </mat-card>
+  }
 
-  <mat-card appearance="raised" class="card temp">
-    <mat-card-header>
-      <mat-card-title>Temperatura externa</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="stat-big">{{ getRealTime('1')?.value }}<span class="unit">°C</span></div>
-      <div class="muted">10m ago</div>
-    </mat-card-content>
-  </mat-card>
+  @for (sensor of getRealTimeDevices(4); track sensor.id) {
+    <mat-card appearance="raised" class="card">
+      <mat-card-header>
+        <mat-card-title>Temperatura externa — {{ sensor.name | titlecase }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-big">{{ sensor.value }}<span class="unit">°C</span></div>
+        <div class="muted">10m ago</div>
+      </mat-card-content>
+    </mat-card>
+  }
 
-  <mat-card appearance="raised" class="card chart-card line">
-    <mat-card-header>
-      <mat-card-title>Temperatura e umidade</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="chart-wrapper">
-        @if (isBrowser) {
-          <canvas baseChart [type]="'line'" 
-                  [data]="humChartData" 
-                  [options]="lineChartOptions"></canvas>
-        }
-      </div>
-    </mat-card-content>
-  </mat-card>
+  @for (sensor of getRealTimeDevices(4); track sensor.id) {
+    <mat-card appearance="raised" class="card chart-card">
+      <mat-card-header>
+        <mat-card-title>Temperatura e umidade — {{ sensor.name | titlecase }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-wrapper">
+          @if (isBrowser) {
+            <canvas baseChart [type]="'line'" 
+                    [data]="humChartData" 
+                    [options]="lineChartOptions"></canvas>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
 
-  <mat-card appearance="raised" class="card chart-card water">
-    <mat-card-header>
-      <mat-card-title>Nível de água</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="chart-wrapper">
-        @if (isBrowser) {
-          <canvas baseChart [type]="'doughnut'" 
-                  [data]="waterChartData" 
-                  [options]="waterChartOptions"></canvas>
-        }
-        <div class="chart-center">{{ getRealTime('3')?.value }}</div>
-      </div>
-    </mat-card-content>
-  </mat-card>
+
+  @for (sensor of getRealTimeDevices(5); track sensor.id) {
+    <mat-card appearance="raised" class="card chart-card">
+      <mat-card-header>
+        <mat-card-title>Nível de água — {{ sensor.name | titlecase }}</mat-card-title>
+        <mat-card-subtitle>Categoria — {{ sensor.category }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-wrapper">
+             <canvas baseChart [type]="'doughnut'"
+                    [data]="buildDoughnutData(sensor.value)"
+                    [options]="waterChartOptions"></canvas>
+      
+          <div class="chart-center">{{ sensor.value }}</div>
+          <div class="muted">10m ago</div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+
+
   <button mat-stroked-button color="primary" (click)="goToDispositivos()">
     Gerenciar Dispositivos
   </button>

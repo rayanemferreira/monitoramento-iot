@@ -36,6 +36,7 @@ export class DashboardComponent {
 
   private load(): void {
     this.service.getAll().subscribe(list => this.Dispositivos = list);
+    console.log('Dispositivos:', this.Dispositivos);
   }
  
 
@@ -49,7 +50,7 @@ export class DashboardComponent {
     plugins: { legend: { display: false }, tooltip: { enabled: false } }
   };
   get gaugeChartData(): ChartConfiguration<'doughnut'>['data'] {
-    const v = Math.max(0, Math.min(100, this.getRealTime('4')?.value || 0));
+    const v = Math.max(0, Math.min(100, this.getRealTime(2)?.value || 0));
     return {
       labels: ['Valor', 'Restante'],
       datasets: [
@@ -64,8 +65,17 @@ export class DashboardComponent {
     cutout: '70%',
     plugins: { legend: { display: false }, tooltip: { enabled: false } }
   };
+  buildDoughnutData(value: number): ChartConfiguration<'doughnut'>['data'] {
+    const v = Math.max(0, Math.min(100, value || 0));
+    return {
+      labels: ['Nível', 'Restante'],
+      datasets: [
+        { data: [v, 100 - v], backgroundColor: ['#2e7d32', '#1e1e1e'] }
+      ]
+    };
+  }
   get waterChartData(): ChartConfiguration<'doughnut'>['data'] {
-    const v = Math.max(0, Math.min(100, this.getRealTime('3')?.value || 0));
+    const v = Math.max(0, Math.min(100, this.getRealTime(3)?.value || 0));
     return {
       labels: ['Nível', 'Restante'],
       datasets: [
@@ -146,9 +156,13 @@ export class DashboardComponent {
     }
     return { labels, values };
   }
-
-  getRealTime(id: string): Dispositivo | undefined {
-    return this.Dispositivos.find(d => d.id === id);
+  getRealTimeDevices(category_id: number): Dispositivo[] {
+    const resp = this.Dispositivos.filter(d => d.category_id === category_id);
+    console.log('resp:', resp);
+    return resp;
+  }
+  getRealTime(category_id: number): Dispositivo | undefined {
+    return this.Dispositivos.find(d => d.category_id === category_id);
   }
 }
 
