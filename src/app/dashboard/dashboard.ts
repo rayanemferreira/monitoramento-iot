@@ -1,4 +1,4 @@
-import { Component, PLATFORM_ID, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -9,8 +9,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { HistoryDialogComponent } from './history-dialog';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
+import { Subscription } from 'rxjs';
 import { Dispositivo, DispositivoStatus } from '../models/dispositivo';
 import { DispositivoService } from '../services/dispositivo.service';
+import { Medicao, RealtimeService } from '../services/realtime.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -21,23 +23,61 @@ import { Router } from '@angular/router';
   styleUrl: './dashboard.css'
 })
 
-export class DashboardComponent {
+export class DashboardComponent implements OnInit, OnDestroy {
   lampOn = false;
  
   readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private dialog = inject(MatDialog);
   private router = inject(Router);
   private readonly service = inject(DispositivoService);
+  private readonly realtime = inject(RealtimeService);
+  private readonly cdr = inject(ChangeDetectorRef);
   Dispositivos: Dispositivo[] = [];
 
-  constructor() {
+  private routerEventsSub?: Subscription;
+  private realtimeSub?: Subscription;
+
+  constructor() {}
+
+  ngOnInit(): void {
     this.load();
+    this.routerEventsSub = this.router.events.subscribe(evt => {
+      if (evt instanceof Object && (evt as any).constructor && (evt as any).constructor.name === 'NavigationEnd') {
+        this.load();
+      }
+    });
+
+    if (this.isBrowser) {
+      this.realtimeSub = this.realtime.connect().subscribe((msg: unknown) => {
+        const data = msg as Partial<Medicao>;
+        console.log('data:', data, this.Dispositivos);
+        if (!data || !data.id_dispositivo) return;
+        const idx = this.Dispositivos.findIndex(d => d.id === data.id_dispositivo);
+        if (idx !== -1 && typeof data.value === 'number') {
+          const updated = { ...this.Dispositivos[idx], value: data.value } as Dispositivo;
+          this.Dispositivos = [
+            ...this.Dispositivos.slice(0, idx),
+            updated,
+            ...this.Dispositivos.slice(idx + 1)
+          ];
+          this.updateEnergyChart();
+          this.cdr.detectChanges();
+        }
+      });
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.routerEventsSub?.unsubscribe();
+    this.realtimeSub?.unsubscribe();
   }
 
   private load(): void {
-    this.service.getAll().subscribe(list => this.Dispositivos = list);
-    console.log('Dispositivos:', this.Dispositivos);
-  }
+    this.service.getAll().subscribe(list => {
+      this.Dispositivos = list;
+      this.updateEnergyChart();
+    });
+   }
  
 
   
@@ -74,6 +114,18 @@ export class DashboardComponent {
       ]
     };
   }
+
+  // Energy-specific donut with thresholds: <=50 green, >50 yellow, >85 red
+  buildEnergyDoughnutData(value: number): ChartConfiguration<'doughnut'>['data'] {
+    const v = Math.max(0, Math.min(100, value || 0));
+    const color = v > 85 ? '#d32f2f' : v > 50 ? '#e9ed02' : '#2e7d32';
+    return {
+      labels: ['Consumo', 'Restante'],
+      datasets: [
+        { data: [v, 100 - v], backgroundColor: [color, '#1e1e1e'] }
+      ]
+    };
+  }
   get waterChartData(): ChartConfiguration<'doughnut'>['data'] {
     const v = Math.max(0, Math.min(100, this.getRealTime(3)?.value || 0));
     return {
@@ -83,6 +135,8 @@ export class DashboardComponent {
       ]
     };
   }
+
+  // reverted: removed energy distribution donut/legend
 
   readonly lineChartOptions: ChartConfiguration<'line'>['options'] = {
     responsive: true,
@@ -116,7 +170,7 @@ export class DashboardComponent {
     datasets: [
       {
         data: [55, 57, 54, 53, 52, 50],
-        label: 'Humidade (%)',
+        label: 'Umidade (%)',
         borderColor: '#2e7d32',
         backgroundColor: 'rgba(46, 125, 50, 0.15)',
         fill: true,
@@ -156,13 +210,56 @@ export class DashboardComponent {
     }
     return { labels, values };
   }
+  onToggle(device: Dispositivo, on: boolean): void {
+    this.service.update(device.id, { on }).subscribe({
+      next: () => this.load(),
+      error: () => this.load()
+    });
+  }
   getRealTimeDevices(category_id: number): Dispositivo[] {
     const resp = this.Dispositivos.filter(d => d.category_id === category_id);
-    console.log('resp:', resp);
-    return resp;
+     return resp;
   }
   getRealTime(category_id: number): Dispositivo | undefined {
     return this.Dispositivos.find(d => d.category_id === category_id);
+  }
+
+  getActuators(): Dispositivo[] {
+    return this.Dispositivos
+      .filter(d => d.category_id === 1)
+      .sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
+  }
+
+  energyChartData?: ChartConfiguration<'doughnut'>['data'];
+  private updateEnergyChart(): void {
+    const v = this.getRealTime(5)?.value ?? 0;
+    this.energyChartData = this.buildEnergyDoughnutData(v);
+  }
+
+  statusLabel(status: DispositivoStatus): string {
+    switch (status) {
+      case 'info': return 'Estável';
+      case 'warn': return 'Monitorar';
+      case 'error': return 'Em Pane';
+      default: return String(status);
+    }
+  }
+
+  private toTitleCase(text: string): string {
+    return (text || '')
+      .toLowerCase()
+      .split(' ')
+      .filter(Boolean)
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+  }
+
+  formatTitle(base: string, sensor: Dispositivo): string {
+    const name = (sensor?.name || '').trim();
+    if (!name) return base;
+    // Hide the appended name when the device name is exactly "Temperatura Externa"
+    if (name.toLowerCase() === 'temperatura externa') return base;
+    return `${base} — ${this.toTitleCase(name)}`;
   }
 }
 

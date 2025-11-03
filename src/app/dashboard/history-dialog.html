@@ -1,4 +1,12 @@
-<h2 mat-dialog-title>Histórico — {{ data.name | titlecase }}</h2>
+<div mat-dialog-title class="title-row">
+  <h2>Histórico — {{ data.name | titlecase }}</h2>
+  <div class="actions">
+
+  <button mat-flat-button color="primary" class="cta" (click)="close()">
+    Fechar
+  </button>
+  </div>
+</div>
 <div class="dialog-body">
   <div class="chart-wrapper">
     @if (isBrowser) {
@@ -6,9 +14,7 @@
     }
   </div>
   <div class="legend">1 = ligado, 0 = desligado</div>
-  <div class="actions">
-    <button mat-stroked-button color="primary" (click)="close()">Fechar</button>
-  </div>
+  
 </div>
 
 

@@ -11,19 +11,19 @@
       <mat-label>Categoria</mat-label>
       <mat-select formControlName="category_id">
         <mat-option [value]="1">Atuador</mat-option>
-        <mat-option [value]="2">sensor_agua</mat-option>
+        <mat-option [value]="2">Sensor de nível</mat-option>
         <mat-option [value]="3">sensor_umidade</mat-option>
         <mat-option [value]="4">sensor_temperatura</mat-option>
-        <mat-option [value]="5">sensor_nivel_de_agua</mat-option>
+        <mat-option [value]="5">Consumo de energia</mat-option>
       </mat-select>
     </mat-form-field> 
 
     <mat-form-field appearance="outline">
       <mat-label>Status</mat-label>
       <mat-select formControlName="status">
-        <mat-option value="info">Info</mat-option>
-        <mat-option value="warn">Aviso</mat-option>
-        <mat-option value="error">Erro</mat-option>
+        <mat-option value="info">Estável</mat-option>
+        <mat-option value="warn">Monitorar</mat-option>
+        <mat-option value="error">Em Pane</mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -34,7 +34,7 @@
 
     <div class="toggle-row">
       <span>Ligado</span>
-      <mat-slide-toggle formControlName="on"></mat-slide-toggle>
+      <mat-slide-toggle color="primary" formControlName="on"></mat-slide-toggle>
     </div>
 
     <div class="actions">

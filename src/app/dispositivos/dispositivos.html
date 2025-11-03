@@ -20,9 +20,9 @@
       </div>
       <div class="row" *ngFor="let d of dispositivos">
         <div>{{ d.name }}</div>
-        <div>{{ d.category }}</div>
+        <div>{{ categoryLabel(d) }}</div>
         <div>
-          <span class="chip" [ngClass]="'c-' + d.status">{{ d.status | uppercase }}</span>
+          <span class="chip" [ngClass]="'c-' + d.status">{{ statusLabel(d.status) }}</span>
         </div>
         <div>{{ d.value }}</div>
         <div class="actions">

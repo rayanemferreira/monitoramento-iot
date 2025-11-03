@@ -1,37 +1,50 @@
 <div class="grid dashboard">
 
-  
-  @for (device of Dispositivos; track device.name; let i = $index) {
-    @if (device.category_id == 1) {
-      <mat-card appearance="raised" class="card device-card" 
-        [ngClass]="['status-' + device.status, 'device-' + i]">
-        
-        <mat-card-header>
-          <mat-card-title>{{ device.name | titlecase }}</mat-card-title>
-          <mat-card-subtitle>Status — {{ device.status | uppercase }}</mat-card-subtitle>
-        </mat-card-header>
+  <mat-card appearance="raised" class="card header">
+    <div class="header-row">
+      <div class="header-left">
+        <img src="/icon-iot.png" alt="Logo" class="logo">
+        <div class="texts">
+          <div class="title">Seja bem-vindo ao gerenciamento de dispositivo</div>
+          <div class="muted">Estatísticas e dispositivos em tempo real</div>
+        </div>
+      </div>
+      <button mat-flat-button color="primary" class="cta" (click)="goToDispositivos()">
+        Gerenciamento de dispositivos
+      </button>
+    </div>
+  </mat-card>
 
-        <mat-card-content>
-          <div class="device-row">
-            <span [class.on]="device.on">{{ device.on ? 'Ligado' : 'Desligado' }}</span>
-            <mat-slide-toggle [(ngModel)]="device.on">Alternar</mat-slide-toggle>
-          </div>
+  <div class="actuators">
+    @for (device of Dispositivos; track device.name; let i = $index) {
+      @if (device.category_id == 1) {
+        <mat-card appearance="raised" class="card device-card" [ngClass]="'status-' + device.status">
+          <mat-card-header>
+            <mat-card-title>{{ device.name | titlecase }}</mat-card-title>
+            <mat-card-subtitle class="muted">Status — {{ statusLabel(device.status) }}</mat-card-subtitle>
+          </mat-card-header>
 
-          <div class="actions">
-            <button mat-stroked-button color="primary" (click)="openHistory(device)">
-              Histórico
-            </button>
-          </div>
-        </mat-card-content>
+          <mat-card-content>
+            <div class="device-row">
+              <span [class.on]="device.on">{{ device.on ? 'Ligado' : 'Desligado' }}</span>
+              <mat-slide-toggle color="primary" [(ngModel)]="device.on" (ngModelChange)="onToggle(device, $event)"></mat-slide-toggle>
+            </div>
 
-      </mat-card>
+            <div class="actions">
+              <button mat-flat-button color="primary" class="cta" (click)="openHistory(device)">
+                Histórico
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
     }
-  }
+  </div>
 
   @for (sensor of getRealTimeDevices(2); track sensor.id) {
     <mat-card appearance="raised" class="card chart-card">
       <mat-card-header>
-        <mat-card-title>Tanque de água — {{ sensor.name | titlecase }}</mat-card-title>
+        <mat-card-title>{{ sensor.name | titlecase }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <div class="chart-wrapper half-circle">
@@ -46,34 +59,34 @@
     </mat-card>
   }
 
-  @for (sensor of getRealTimeDevices(3); track sensor.id) {
+  @for (sensor of getRealTimeDevices(4); track sensor.id) {
     <mat-card appearance="raised" class="card">
       <mat-card-header>
-        <mat-card-title>Umidade — {{ sensor.name | titlecase }}</mat-card-title>
+        <mat-card-title> {{ sensor.name | titlecase }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <div class="stat-big">{{ sensor.value }}<span class="unit">%</span></div>
-        <div class="muted">10m ago</div>
+        <div class="stat-big">{{ sensor.value }}<span class="unit">ºC</span></div>
+        <div class="muted">10m atrás</div>
       </mat-card-content>
     </mat-card>
   }
 
-  @for (sensor of getRealTimeDevices(4); track sensor.id) {
+  <!-- @for (sensor of getRealTimeDevices(4); track sensor.id) {
     <mat-card appearance="raised" class="card">
       <mat-card-header>
-        <mat-card-title>Temperatura externa — {{ sensor.name | titlecase }}</mat-card-title>
+        <mat-card-title>{{ sensor.name | titlecase }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <div class="stat-big">{{ sensor.value }}<span class="unit">°C</span></div>
-        <div class="muted">10m ago</div>
+        <div class="muted">10m atrás</div>
       </mat-card-content>
     </mat-card>
-  }
+  } -->
 
-  @for (sensor of getRealTimeDevices(4); track sensor.id) {
+  @for (sensor of getRealTimeDevices(3); track sensor.id) {
     <mat-card appearance="raised" class="card chart-card">
       <mat-card-header>
-        <mat-card-title>Temperatura e umidade — {{ sensor.name | titlecase }}</mat-card-title>
+        <mat-card-title>{{ sensor.name | titlecase }}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <div class="chart-wrapper">
@@ -88,28 +101,35 @@
   }
 
 
-  @for (sensor of getRealTimeDevices(5); track sensor.id) {
-    <mat-card appearance="raised" class="card chart-card">
+  @if (getRealTime(5); as energy) {
+    <mat-card appearance="raised" class="card chart-card energy">
       <mat-card-header>
-        <mat-card-title>Nível de água — {{ sensor.name | titlecase }}</mat-card-title>
-        <mat-card-subtitle>Categoria — {{ sensor.category }}</mat-card-subtitle>
+        <mat-card-title>Consumo de energia</mat-card-title>
+        <mat-card-subtitle class="muted">{{ energy.name | titlecase }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <div class="chart-wrapper">
-             <canvas baseChart [type]="'doughnut'"
-                    [data]="buildDoughnutData(sensor.value)"
-                    [options]="waterChartOptions"></canvas>
-      
-          <div class="chart-center">{{ sensor.value }}</div>
-          <div class="muted">10m ago</div>
+          <canvas baseChart [type]="'doughnut'"
+                  [data]="energyChartData"
+                  [options]="waterChartOptions"></canvas>
+          <div class="chart-center">{{ energy.value }}</div>
+        </div>
+
+        <div class="energy-table">
+          <div class="thead">
+            <div>Dispositivo</div>
+            <div>Status</div>
+            <div class="right">Valor</div>
+          </div>
+          @for (d of getActuators(); track d.id) {
+            <div class="row">
+              <div>{{ d.name }}</div>
+              <div><span class="chip" [ngClass]="'c-' + d.status">{{ statusLabel(d.status) }}</span></div>
+              <div class="right">{{ d.value }}</div>
+            </div>
+          }
         </div>
       </mat-card-content>
     </mat-card>
   }
-
-
-
-  <button mat-stroked-button color="primary" (click)="goToDispositivos()">
-    Gerenciar Dispositivos
-  </button>
 </div>

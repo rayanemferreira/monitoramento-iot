@@ -3,14 +3,18 @@
 
 /* Dark dialog to match dashboard */
 .dark-dialog .mat-mdc-dialog-surface {
-  background: #1a1a1a;
-  color: #e5e5e5;
+  background: #ffffff; /* fundo branco */
+  color: #1a1a1a;
+  box-shadow: none; /* sem sombra escura */
+  border: 1px solid #2a2a2a; /* borda clara para definição */
 }
 .dark-dialog .mat-mdc-dialog-title {
-  color: #e5e5e5;
+  color: #0f172a;
+  border-bottom: 1px solid #2a2a2a;
 }
+.dark-dialog .mdc-dialog__title { border-bottom: 1px solid #2a2a2a; }
 .dark-dialog .mdc-dialog__content {
-  color: #cfcfcf;
+  color: #334155;
 }
 
 /* Global dark background and text */

@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # third-party
+    'channels',
     'rest_framework',
     'corsheaders',
     # local
@@ -53,6 +54,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'iot_api.wsgi.application'
+ASGI_APPLICATION = 'iot_api.asgi.application'
 
 DATABASES = {
     'default': {
@@ -85,6 +87,14 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
+}
+
+
+# Channels - in-memory layer for dev
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
 }
 
 

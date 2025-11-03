@@ -1,4 +1,4 @@
-.dialog-body { padding-top: 4px; }
+.dialog-body { padding:16px; }
 
 .form-grid {
   display: grid;
@@ -12,8 +12,9 @@
   justify-content: space-between;
   padding: 12px;
   border-radius: 8px;
-  background: #1a1a1a;
-  color: #e5e5e5;
+  background: #f8fafc; /* claro no branco */
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
 }
 
 .actions {
@@ -26,5 +27,37 @@
 @media (max-width: 600px) {
   .form-grid { grid-template-columns: 1fr; }
 }
+
+
+/* Improve contrast and harmony for form fields in dark dialog */
+.form-grid .mat-mdc-form-field { width: 100%; }
+.form-grid .mdc-text-field--outlined { background: #ffffff; box-shadow: none; }
+
+/* Outlined borders (default state) */
+.form-grid .mdc-notched-outline__leading,
+.form-grid .mdc-notched-outline__notch,
+.form-grid .mdc-notched-outline__trailing { border-color: #b0bec5; }
+
+/* Focused border and label */
+.form-grid .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+.form-grid .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+.form-grid .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing { border-color: #42a5f5; }
+.form-grid .mat-mdc-form-field.mat-focused .mat-mdc-form-field-label { color: #1976d2; }
+
+/* Label and input text */
+.form-grid .mat-mdc-form-field-label { color: #5f6b75; opacity: 1; }
+.form-grid .mat-mdc-input-element { color: #0f172a; font-size: 15px; }
+
+/* Select value and arrow */
+.form-grid .mat-mdc-select-value { color: #0f172a; }
+.form-grid .mat-mdc-select-arrow { color: #1976d2; }
+
+/* Slide toggle colors */
+.toggle-row .mdc-switch__track { background: #cbd5e1; }
+.toggle-row .mdc-switch--selected .mdc-switch__track { background: #60a5fa; }
+.toggle-row .mdc-switch--selected .mdc-switch__handle { background: #ffffff; }
+
+/* Mensagens de ajuda/erro mais nítidas */
+.mat-mdc-form-field-subscript-wrapper { color: #475569; }
 
 
